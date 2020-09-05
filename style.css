@@ -1,0 +1,37 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+#board {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+  width: 155px;
+  margin: auto;
+}
+
+.game_stats {
+  border: 1px solid red;
+  display: flex;
+  justify-content: center;
+  padding: 1em;
+  margin: 2em 0;
+}
+
+.player {
+  margin: 0 100px;
+}
+
+.cell {
+  display: flex;
+  width: 50px;
+  background-color: #f0f0f0;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+}
+.cell:hover {
+  border: 1px solid gray;
+}
