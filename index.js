@@ -2,42 +2,40 @@
 //get cell clicked
 //game logic
 
-let game = ['', '', '', '', '', '', '', '', ''];
+let game = [
+  ['', '', ''],
+  ['', '', ''],
+  ['', '', ''],
+];
+
 let turn = true;
 let winner = false;
 
-const addToGame = (cellId, value) => {
-  const index = cellId - 1;
-  game[index] = value;
-  drawGame();
-  checkWinner();
+const addToGame = (row, col, player) => {
+  game[row][col] = player;
+  // drawGame();
+  // checkWinner();
+  console.log(game);
 };
 
-const drawGame = () => {
-  game.forEach((cell, index) => {
-    // console.log('cell', index);
-    // console.log('cell', cell);
-    document.getElementById(index + 1).innerText = cell;
-  });
-};
+// drawGame();
 
 const handleClick = (e) => {
-  const cell = e.target;
-  // if (game[e.target.id - 1] != undefined)
-  //   return console.log('cell already with value');
+  const row = e.target.dataset.row;
+  const col = e.target.dataset.col;
+  if (game[row][col] != '') return console.log('cell already with value');
 
-  let value;
-  turn ? (value = 'X') : (value = 'O');
+  let player;
+  turn ? (player = 'X') : (player = 'O');
+  e.target.innerText = player;
   turn = !turn;
-  addToGame(e.target.id, value);
+
+  addToGame(row, col, player);
 };
 
 const resetGame = () => {
   console.log('reset game clicked');
-  game = ['', '', '', '', '', '', '', '', ''];
   turn = true;
-
-  drawGame();
 };
 
 function arraysEqual(a1, a2) {
