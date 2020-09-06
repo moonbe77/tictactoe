@@ -3,3 +3,6 @@
 ## Coding on js playing with logical thinking
 
 how to try it? pending github page
+
+
+NOT FINISHED
