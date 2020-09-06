@@ -2,7 +2,7 @@
 //get cell clicked
 //game logic
 
-let game = [];
+let game = ['', '', '', '', '', '', '', '', ''];
 let turn = true;
 let winner = false;
 
@@ -13,8 +13,8 @@ const addToGame = (cellId, value) => {
   checkWinner();
 };
 
-const drawGame = async () => {
-  await game.map((cell, index) => {
+const drawGame = () => {
+  game.forEach((cell, index) => {
     // console.log('cell', index);
     // console.log('cell', cell);
     document.getElementById(index + 1).innerText = cell;
@@ -23,8 +23,8 @@ const drawGame = async () => {
 
 const handleClick = (e) => {
   const cell = e.target;
-  if (game[e.target.id - 1] != undefined)
-    return console.log('cell already with value');
+  // if (game[e.target.id - 1] != undefined)
+  //   return console.log('cell already with value');
 
   let value;
   turn ? (value = 'X') : (value = 'O');
@@ -34,19 +34,20 @@ const handleClick = (e) => {
 
 const resetGame = () => {
   console.log('reset game clicked');
-  game = [];
+  game = ['', '', '', '', '', '', '', '', ''];
   turn = true;
-  console.log(game);
+
   drawGame();
 };
+
+function arraysEqual(a1, a2) {
+  /* WARNING: arrays must not contain {objects} or behavior may be undefined */
+  return JSON.stringify(a1) == JSON.stringify(a2);
+}
 
 const checkWinner = () => {
   let checkX = [];
   let checkO = [];
-  function arraysEqual(a1, a2) {
-    /* WARNING: arrays must not contain {objects} or behavior may be undefined */
-    return JSON.stringify(a1) == JSON.stringify(a2);
-  }
   function compare() {
     const recipes = [
       [0, 1, 2],
@@ -59,17 +60,17 @@ const checkWinner = () => {
       [2, 4, 6],
     ];
 
-    recipes.map((recipe) => {
+    recipes.forEach((recipe) => {
       if (arraysEqual(checkX, recipe)) {
-        alert('X is the winner');
+        console.log('X is the winner');
       }
       if (arraysEqual(checkO, recipe)) {
-        alert('O is the winner');
+        console.log('O is the winner');
       }
     });
   }
 
-  game.map((e, index) => {
+  game.forEach((e, index) => {
     if (e == 'X') {
       checkX.push(index);
     } else {
@@ -77,8 +78,6 @@ const checkWinner = () => {
     }
     compare();
   });
-
-  
 };
 
 document
