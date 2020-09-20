@@ -9,7 +9,7 @@ let playerX = 'X';
 let playerO = 'O';
 let player = 'X';
 let turn = true; //true is man
-let winner = false;
+let isWinner = false;
 let moves = 0;
 let game = [
   ['', '', ''],
@@ -33,7 +33,7 @@ const startGame = () => {
 
   winnerNode.innerText = ``;
   turn = true;
-  winner = false;
+  isWinner = false;
   moves = 0;
   player = 'X';
   updateGameStats();
@@ -49,7 +49,7 @@ const addToGame = (row, col, player) => {
   game[row][col] = player;
 
   countMoves(game);
-  checkWinner(player);
+  checkWinner(game);
   changePlayer();
   updateGameStats();
   drawBoard(game);
@@ -132,16 +132,14 @@ const aiMove = () => {
 const nextMove = () => {
   console.log('next move');
   if (turn) return;
-  if (winner) return;
+  if (isWinner) return;
   const move = aiMove();
   console.log(move);
 
-  const timer = setTimeout(() => {
+  setTimeout(() => {
     console.log('random move called');
     addToGame(move[0], move[1], player);
-  }, 1000);
-
-  // clearTimeout(timer);
+  }, 600);
 };
 
 const updateGameStats = () => {
@@ -164,12 +162,12 @@ const updateGameStats = () => {
 };
 
 const handleClick = (e) => {
-  if (winner) return;
+  if (isWinner) return;
   const row = e.target.dataset.row;
   const col = e.target.dataset.col;
   if (game[row][col] != '') return console.log('can not click on that cell');
 
-  addToGame(row, col, player, e);
+  addToGame(row, col, player);
 };
 
 const declareWinner = (player, draw) => {
@@ -180,7 +178,7 @@ const declareWinner = (player, draw) => {
     return;
   }
 
-  winner = player === 'X' ? playerX : playerO;
+  let winner = player === 'X' ? playerX : playerO;
   if (winner) {
     winnerNode.innerText = `${winner} is the winner`;
     player2.classList.remove('next_turn');
@@ -188,18 +186,18 @@ const declareWinner = (player, draw) => {
   }
 };
 
-const checkWinner = (player) => {
-  let r1c1 = game[0][0] === player;
-  let r1c2 = game[0][1] === player;
-  let r1c3 = game[0][2] === player;
+const checkWinner = (board) => {
+  let r1c1 = board[0][0] === player;
+  let r1c2 = board[0][1] === player;
+  let r1c3 = board[0][2] === player;
 
-  let r2c1 = game[1][0] === player;
-  let r2c2 = game[1][1] === player;
-  let r2c3 = game[1][2] === player;
+  let r2c1 = board[1][0] === player;
+  let r2c2 = board[1][1] === player;
+  let r2c3 = board[1][2] === player;
 
-  let r3c1 = game[2][0] === player;
-  let r3c2 = game[2][1] === player;
-  let r3c3 = game[2][2] === player;
+  let r3c1 = board[2][0] === player;
+  let r3c2 = board[2][1] === player;
+  let r3c3 = board[2][2] === player;
 
   if (
     (r1c1 && r1c2 && r1c3) ||
@@ -207,6 +205,8 @@ const checkWinner = (player) => {
     (r3c1 && r3c2 && r3c3)
   ) {
     declareWinner(player);
+    isWinner = true;
+    return true;
   }
 
   if (
@@ -214,24 +214,24 @@ const checkWinner = (player) => {
     (r1c2 && r2c2 && r3c2) ||
     (r1c3 && r2c3 && r3c3)
   ) {
+    isWinner = true;
     declareWinner(player);
   }
 
   if (r1c1 && r2c2 && r3c3) {
+    isWinner = true;
     declareWinner(player);
   }
 
   if (r3c1 && r2c2 && r1c3) {
+    isWinner = true;
     declareWinner(player);
   }
 
   if (moves === 9) {
+    isWinner = true;
     declareWinner(null, true);
   }
-
-  // if (!winner && moves < 9 && turn == false) {
-  //   aiMove();
-  // }
 };
 
 const addNameToPlayer = (e) => {
