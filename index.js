@@ -1,7 +1,11 @@
-//toggle between players
+//toggle between players DONE
 //get cell clicked
 //game logic
 
+// const startGame = () => {};
+
+const winnerNode = document.getElementById('winner');
+const gameStatsNode = document.getElementById('game_stats');
 let game = [
   ['', '', ''],
   ['', '', ''],
@@ -13,9 +17,7 @@ let winner = false;
 
 const addToGame = (row, col, player) => {
   game[row][col] = player;
-  // drawGame();
-  // checkWinner();
-  console.log(game);
+  checkWinner(player);
 };
 
 // drawGame();
@@ -34,48 +36,61 @@ const handleClick = (e) => {
 };
 
 const resetGame = () => {
+  const board = document.getElementById('board').children;
+  const boardArray = Array.from(board);
+  boardArray.forEach((element) => {
+    element.innerText = '';
+  });
   console.log('reset game clicked');
+  game = [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
+  ];
   turn = true;
 };
 
-function arraysEqual(a1, a2) {
-  /* WARNING: arrays must not contain {objects} or behavior may be undefined */
-  return JSON.stringify(a1) == JSON.stringify(a2);
-}
+const declareWinner = (player) => {
+  winnerNode.innerText = player + 'is the winner';
+};
+const checkWinner = (player) => {
+  let r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3;
 
-const checkWinner = () => {
-  let checkX = [];
-  let checkO = [];
-  function compare() {
-    const recipes = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
+  r1c1 = game[0][0] === player;
+  r1c2 = game[0][1] === player;
+  r1c3 = game[0][2] === player;
 
-    recipes.forEach((recipe) => {
-      if (arraysEqual(checkX, recipe)) {
-        console.log('X is the winner');
-      }
-      if (arraysEqual(checkO, recipe)) {
-        console.log('O is the winner');
-      }
-    });
+  r2c1 = game[1][0] === player;
+  r2c2 = game[1][1] === player;
+  r2c3 = game[1][2] === player;
+
+  r3c1 = game[2][0] === player;
+  r3c2 = game[2][1] === player;
+  r3c3 = game[2][2] === player;
+
+  if (
+    (r1c1 && r1c2 && r1c3) ||
+    (r2c1 && r2c2 && r2c3) ||
+    (r3c1 && r3c2 && r3c3)
+  ) {
+    declareWinner(player);
   }
 
-  game.forEach((e, index) => {
-    if (e == 'X') {
-      checkX.push(index);
-    } else {
-      checkO.push(index);
-    }
-    compare();
-  });
+  if (
+    (r1c1 && r2c1 && r3c1) ||
+    (r1c2 && r2c2 && r3c2) ||
+    (r1c3 && r2c3 && r3c3)
+  ) {
+    declareWinner(player);
+  }
+
+  if (r1c1 && r2c2 && r3c3) {
+    declareWinner(player);
+  }
+
+  if (r3c1 && r2c2 && r1c3) {
+    declareWinner(player);
+  }
 };
 
 document
