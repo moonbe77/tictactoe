@@ -15,13 +15,22 @@
 .game_stats {
   border: 1px solid red;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   padding: 1em;
   margin: 2em 0;
 }
 
 .player {
-  margin: 0 100px;
+  min-width: 100px;
+  text-align: center;
+  padding: 0.5em;
+  border-radius: 5px;
+  border: 1px solid gray;
+}
+
+.next_turn {
+  background-color: red;
+  border: 1px solid red;
 }
 
 .cell {
