@@ -3,3 +3,4 @@
 ## Coding on js playing with logical thinking
 
 playable
+** [try it here >>] (https://moonbe77.github.io/tictactoe/)
