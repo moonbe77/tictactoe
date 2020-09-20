@@ -35,3 +35,12 @@
 .cell:hover {
   border: 1px solid gray;
 }
+
+#winner {
+  display: flex;
+  justify-content: center;
+  margin: 1em;
+  font-size: 1.5em;
+  background-color: aquamarine;
+  padding: 1em;
+}

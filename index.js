@@ -2,10 +2,20 @@
 //get cell clicked
 //game logic
 
-// const startGame = () => {};
-
 const winnerNode = document.getElementById('winner');
 const gameStatsNode = document.getElementById('game_stats');
+const player1 = document.getElementById('player1');
+const player2 = document.getElementById('player2');
+let playerX, playerY;
+
+const startGame = () => {
+  playerX = prompt('Enter player X name') || 'X';
+  playerO = prompt('Enter player O name') || 'O';
+
+  player1.innerHTML = `P1: ${playerX}`;
+  player2.innerHTML = `P2: ${playerO}`;
+};
+
 let game = [
   ['', '', ''],
   ['', '', ''],
@@ -23,6 +33,8 @@ const addToGame = (row, col, player) => {
 // drawGame();
 
 const handleClick = (e) => {
+  if (winner) return;
+
   const row = e.target.dataset.row;
   const col = e.target.dataset.col;
   if (game[row][col] != '') return console.log('cell already with value');
@@ -47,11 +59,17 @@ const resetGame = () => {
     ['', '', ''],
     ['', '', ''],
   ];
+  winnerNode.innerText = ``;
   turn = true;
+  turn = true;
+  winner = false;
 };
 
 const declareWinner = (player) => {
-  winnerNode.innerText = player + 'is the winner';
+  winner = player === 'X' ? playerX : playerO;
+  if (winner) {
+    winnerNode.innerText = `${winner} is the winner`;
+  } 
 };
 const checkWinner = (player) => {
   let r1c1, r1c2, r1c3, r2c1, r2c2, r2c3, r3c1, r3c2, r3c3;
@@ -106,3 +124,5 @@ document.getElementById('6').addEventListener('click', handleClick);
 document.getElementById('7').addEventListener('click', handleClick);
 document.getElementById('8').addEventListener('click', handleClick);
 document.getElementById('9').addEventListener('click', handleClick);
+
+startGame();
