@@ -1,6 +1,21 @@
 * {
   margin: 0;
   box-sizing: border-box;
+  font-family: 'Just Another Hand', cursive;
+  font-size: 20px;
+}
+
+button{
+  width: 100%;
+  background-color: #8ffffd;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover{
+  background-color: #79d7d5;
+
 }
 
 #board {
@@ -13,14 +28,15 @@
 }
 
 .game_stats {
-  border: 1px solid red;
   display: flex;
   justify-content: space-around;
   padding: 1em;
   margin: 2em 0;
+  background-color: lightcoral;
 }
 
 .player {
+  margin: 5px;
   min-width: 100px;
   text-align: center;
   padding: 0.5em;
@@ -29,8 +45,9 @@
 }
 
 .next_turn {
-  background-color: red;
-  border: 1px solid red;
+  transition: all 500ms ease-in;
+  background-color: #79d7d5;
+  border: 1px solid #79d7d5;
 }
 
 .cell {
@@ -40,16 +57,20 @@
   height: 50px;
   justify-content: center;
   align-items: center;
+  border-radius: 5px;
+  box-shadow: 0px 0px 4px -2px #919191;
 }
 .cell:hover {
-  border: 1px solid gray;
+  box-shadow: none;
 }
 
 #winner {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin: 1em;
   font-size: 1.5em;
   background-color: aquamarine;
-  padding: 1em;
+  height: 50px;
+  border-radius: 5px;
 }
