@@ -12,6 +12,7 @@ let aiPlayer = 'O';
 let player = huPlayer;
 let turn = true; //true is man
 let isWinner = false;
+let isTie = false;
 let moves = 0;
 let game = [
   ['', '', ''],
@@ -29,6 +30,7 @@ function handleClick(e) {
   if (isWinner) return;
   const row = e.target.dataset.row;
   const col = e.target.dataset.col;
+  console.log('cell click', row, col);
 
   addToGame(row, col, player);
 }
@@ -51,6 +53,7 @@ const startGame = () => {
   winnerNode.innerText = ``;
   turn = true;
   isWinner = false;
+  isTie = false;
   moves = 0;
   player = huPlayer;
   updateGameStats();
@@ -60,7 +63,7 @@ const startGame = () => {
 const changePlayer = () => {
   turn = !turn;
   turn ? (player = huPlayer) : (player = aiPlayer);
-  // console.log(player);
+  console.log(player);
 };
 
 const addToGame = (row, col, player) => {
@@ -71,6 +74,7 @@ const addToGame = (row, col, player) => {
   changePlayer();
   updateGameStats();
   drawBoard(game);
+  declareWinner(game, player);
   nextMove();
 };
 
@@ -167,9 +171,9 @@ function minimax(newBoard, player) {
   var moves = [];
 
   for (var i = 0; i < availSpots.length; i++) {
-    console.log(moves);
     var move = {};
-    move.index = [availSpots[i][0],availSpots[i][1]];
+    move.index = [availSpots[i][0], availSpots[i][1]];
+    move.orig = newBoard[availSpots[i][0]][availSpots[i][1]];
     newBoard[availSpots[i][0]][availSpots[i][1]] = player;
 
     if (player == aiPlayer) {
@@ -180,7 +184,7 @@ function minimax(newBoard, player) {
       move.score = result.score;
     }
 
-    // newBoard[availSpots[i][0]][availSpots[i][1]] = move.index;
+    newBoard[availSpots[i][0]][availSpots[i][1]] = move.orig;
 
     moves.push(move);
   }
@@ -208,16 +212,19 @@ function minimax(newBoard, player) {
 }
 
 const nextMove = () => {
-  if (player == huPlayer) return;
-  if (isWinner) return;
-  console.log(game);
+  if (player == huPlayer) {
+    return;
+  }
+  if (isWinner || isTie) {
+    return;
+  }
 
-  // const copyGame = [...game];
-  const bestMove = minimax(game, aiPlayer);
+  const copyGame = [...game];
+  const bestMove = minimax(copyGame, aiPlayer).index;
   console.log('minimax', bestMove);
 
   setTimeout(() => {
-    addToGame(bestMove.index[0], bestMove.index[1], player);
+    addToGame(bestMove[0], bestMove[1], player);
   }, 600);
 };
 
@@ -240,20 +247,23 @@ const updateGameStats = () => {
   }
 };
 
-const declareWinner = (player, draw) => {
-  if (draw) {
-    winnerNode.innerText = `the game is draw`;
-    player2.classList.remove('next_turn');
-    player1.classList.remove('next_turn');
-    return;
-  }
-
-  let winner = player === huPlayer ? huPlayer : aiPlayer;
-  if (winner) {
-    winnerNode.innerText = `${winner} is the winner`;
+const declareWinner = (board, player) => {
+  if (checkWinner(board, player)) {
+    isWinner = true;
+    winnerNode.innerText = `${player} is the winner`;
     player2.classList.remove('next_turn');
     player1.classList.remove('next_turn');
     showModal();
+    return;
+  }
+
+  if (moves === 9) {
+    isTie = true;
+    winnerNode.innerText = `the game is draw`;
+    player2.classList.remove('next_turn');
+    player1.classList.remove('next_turn');
+    showModal();
+    return;
   }
 };
 
@@ -275,8 +285,6 @@ const checkWinner = (board, ply) => {
     (r2c1 && r2c2 && r2c3) ||
     (r3c1 && r3c2 && r3c3)
   ) {
-    isWinner = true;
-    // declareWinner(ply);
     return true;
   }
 
@@ -285,28 +293,20 @@ const checkWinner = (board, ply) => {
     (r1c2 && r2c2 && r3c2) ||
     (r1c3 && r2c3 && r3c3)
   ) {
-    isWinner = true;
-    // declareWinner(ply);
     return true;
   }
 
   if (r1c1 && r2c2 && r3c3) {
-    isWinner = true;
-    // declareWinner(ply);
     return true;
   }
 
   if (r3c1 && r2c2 && r1c3) {
-    isWinner = true;
-    // declareWinner(ply);
     return true;
   }
 
-  if (moves === 9) {
-    isWinner = true;
-    // declareWinner(null, true);
-    return false;
-  }
+  // if (moves === 9) {
+  //   return false;
+  // }
 };
 
 const addNameToPlayer = (e) => {
