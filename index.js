@@ -141,80 +141,85 @@ const availableMoves = (board) => {
   return emptyCells;
 };
 
-const aiMove = () => {
-  const posibleMoves = availableMoves();
-  const pickRandom = Math.floor(
-    Math.random() * Math.floor(posibleMoves.length)
-  );
+// const aiMove = () => {
+//   const posibleMoves = availableMoves(game);
+//   const pickRandom = Math.floor(
+//     Math.random() * Math.floor(posibleMoves.length)
+//   );
 
-  return [posibleMoves[pickRandom][0], posibleMoves[pickRandom][1]];
+//   return [posibleMoves[pickRandom][0], posibleMoves[pickRandom][1]];
+// };
+
+let bestScore;
+const score = {
+  O: 1,
+  X: -1,
+  draw: 0,
 };
-
 const minimax = (game, depth, player) => {
-  const posibleMoves = availableMoves();
-  if (checkWinner(game, player)) {
-    return move;
+  const posibleMoves = availableMoves(game);
+  if (isWinner) {
+    return;
   }
 
-  if (player === playerO) {
-    let bestScore = Infinity;
+  if (player === 'O') {
+    bestScore = Infinity;
+    console.log('minimaxGame', game);
+    console.log(player);
 
-    posibleMoves.forEach((element) => {
-      if (checkWinner(game, player)) {
-        return {
-          score: -10,
-        };
-      } else if (checkWinner(game, player)) {
-        return {
-          score: -10,
-        };
-      } else if (posibleMoves.length === 0) {
-        return {
-          score: 0,
-        };
+    posibleMoves.forEach((e) => {
+      if (score.O < bestScore) {
+        console.log(e);
+        let move = { r: e[0], c: e[1] };
+        game[move.r][move.c] = player;
+        minimax(game, depth, playerX);
+        bestScore = Math.max(score.O, bestScore);
+        console.log('bestScore', bestScore);
       }
+
+      return bestScore;
     });
   } else {
-    if (checkWinner(game, player)) {
-      return {
-        score: -10,
-      };
-    } else if (checkWinner(game, player)) {
-      return {
-        score: -10,
-      };
-    } else if (posibleMoves.length === 0) {
-      return {
-        score: 0,
-      };
-    }
+    console.log(player);
+    bestScore = -Infinity;
+    posibleMoves.forEach((e) => {
+      if (score.O > bestScore) {
+        console.log(e);
+        let move = { r: e[0], c: e[1] };
+        game[move.r][move.c] = player;
+        minimax(game, depth, playerO);
+        bestScore = Math.min(score.O, bestScore);
+        console.log('bestScore', bestScore);
+      }
+      return bestScore;
+    });
   }
 };
 
 const nextMove = () => {
-  console.log(game);
   if (turn) return;
   if (isWinner) return;
+
   const copyGame = [...game];
   const posibleMoves = availableMoves(copyGame);
 
-  posibleMoves.forEach((element) => {
-    console.log('element', element);
+  // posibleMoves.forEach((element) => {
+  //   console.log('element', element);
 
-    copyGame[element[0]][element[1]] = playerO;
-    console.log('copyGame>', copyGame);
+  //   copyGame[element[0]][element[1]] = playerO;
+  //   console.log('copyGame>', copyGame);
 
-    const bestMove = minimax(copyGame, playerO);
-    console.log('bestMove', bestMove);
+  const bestMove = minimax(copyGame, 1, playerO);
+  console.log('minimax', bestMove);
 
-    copyGame[element[0]][element[1]] = '';
-  });
+  //   copyGame[element[0]][element[1]] = '';
+  // });
 
-  const move = aiMove();
+  // const move = aiMove();
 
-  setTimeout(() => {
-    addToGame(move[0], move[1], player);
-  }, 600);
+  // setTimeout(() => {
+  //   addToGame(move[0], move[1], player);
+  // }, 600);
 };
 
 const updateGameStats = () => {
@@ -301,6 +306,7 @@ const checkWinner = (board, ply) => {
   if (moves === 9) {
     isWinner = true;
     declareWinner(null, true);
+    return false;
   }
 };
 
