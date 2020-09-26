@@ -7,9 +7,9 @@ const player1 = document.getElementById('player1');
 const player2 = document.getElementById('player2');
 const cellElements = document.querySelectorAll('.cell');
 
-let playerX = 'X';
-let playerO = 'O';
-let player = playerX;
+let huPlayer = 'X';
+let aiPlayer = 'O';
+let player = huPlayer;
 let turn = true; //true is man
 let isWinner = false;
 let moves = 0;
@@ -18,9 +18,12 @@ let game = [
   ['', '', ''],
   ['', '', ''],
 ];
-cellElements.forEach((e) => {
-  e.addEventListener('click', handleClick, { once: true });
-});
+
+const addEventToCells = () => {
+  cellElements.forEach((e) => {
+    e.addEventListener('click', handleClick, { once: true });
+  });
+};
 
 function handleClick(e) {
   if (isWinner) return;
@@ -31,6 +34,7 @@ function handleClick(e) {
 }
 
 const startGame = () => {
+  addEventToCells();
   hideModal();
   const board = document.getElementById('board').children;
   const boardArray = Array.from(board);
@@ -48,14 +52,14 @@ const startGame = () => {
   turn = true;
   isWinner = false;
   moves = 0;
-  player = playerX;
+  player = huPlayer;
   updateGameStats();
   drawBoard(game);
 };
 
 const changePlayer = () => {
   turn = !turn;
-  turn ? (player = playerX) : (player = playerO);
+  turn ? (player = huPlayer) : (player = aiPlayer);
   // console.log(player);
 };
 
@@ -150,87 +154,82 @@ const availableMoves = (board) => {
 //   return [posibleMoves[pickRandom][0], posibleMoves[pickRandom][1]];
 // };
 
-let bestScore;
-const score = {
-  O: 1,
-  X: -1,
-  draw: 0,
-};
-const minimax = (game, depth, player) => {
-  const posibleMoves = availableMoves(game);
-  if (isWinner) {
-    return;
+function minimax(newBoard, player) {
+  var availSpots = availableMoves(newBoard);
+
+  if (checkWinner(newBoard, huPlayer)) {
+    return { score: -10 };
+  } else if (checkWinner(newBoard, aiPlayer)) {
+    return { score: 10 };
+  } else if (availSpots.length === 0) {
+    return { score: 0 };
+  }
+  var moves = [];
+
+  for (var i = 0; i < availSpots.length; i++) {
+    console.log(moves);
+    var move = {};
+    move.index = [availSpots[i][0],availSpots[i][1]];
+    newBoard[availSpots[i][0]][availSpots[i][1]] = player;
+
+    if (player == aiPlayer) {
+      var result = minimax(newBoard, huPlayer);
+      move.score = result.score;
+    } else {
+      var result = minimax(newBoard, aiPlayer);
+      move.score = result.score;
+    }
+
+    // newBoard[availSpots[i][0]][availSpots[i][1]] = move.index;
+
+    moves.push(move);
   }
 
-  if (player === 'O') {
-    bestScore = Infinity;
-    console.log('minimaxGame', game);
-    console.log(player);
-
-    posibleMoves.forEach((e) => {
-      if (score.O < bestScore) {
-        console.log(e);
-        let move = { r: e[0], c: e[1] };
-        game[move.r][move.c] = player;
-        minimax(game, depth, playerX);
-        bestScore = Math.max(score.O, bestScore);
-        console.log('bestScore', bestScore);
+  var bestMove;
+  if (player === aiPlayer) {
+    var bestScore = -10000;
+    for (var i = 0; i < moves.length; i++) {
+      if (moves[i].score > bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
       }
-
-      return bestScore;
-    });
+    }
   } else {
-    console.log(player);
-    bestScore = -Infinity;
-    posibleMoves.forEach((e) => {
-      if (score.O > bestScore) {
-        console.log(e);
-        let move = { r: e[0], c: e[1] };
-        game[move.r][move.c] = player;
-        minimax(game, depth, playerO);
-        bestScore = Math.min(score.O, bestScore);
-        console.log('bestScore', bestScore);
+    var bestScore = 10000;
+    for (var i = 0; i < moves.length; i++) {
+      if (moves[i].score < bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
       }
-      return bestScore;
-    });
+    }
   }
-};
+
+  return moves[bestMove];
+}
 
 const nextMove = () => {
-  if (turn) return;
+  if (player == huPlayer) return;
   if (isWinner) return;
+  console.log(game);
 
-  const copyGame = [...game];
-  const posibleMoves = availableMoves(copyGame);
-
-  // posibleMoves.forEach((element) => {
-  //   console.log('element', element);
-
-  //   copyGame[element[0]][element[1]] = playerO;
-  //   console.log('copyGame>', copyGame);
-
-  const bestMove = minimax(copyGame, 1, playerO);
+  // const copyGame = [...game];
+  const bestMove = minimax(game, aiPlayer);
   console.log('minimax', bestMove);
 
-  //   copyGame[element[0]][element[1]] = '';
-  // });
-
-  // const move = aiMove();
-
-  // setTimeout(() => {
-  //   addToGame(move[0], move[1], player);
-  // }, 600);
+  setTimeout(() => {
+    addToGame(bestMove.index[0], bestMove.index[1], player);
+  }, 600);
 };
 
 const updateGameStats = () => {
   movesNode.innerText = 9 - moves;
 
   if (turn) {
-    turnNode.innerText = `${playerX} is playing`;
+    turnNode.innerText = `${huPlayer} is playing`;
     player1.classList.add('next_turn');
     player2.classList.remove('next_turn');
   } else {
-    turnNode.innerText = `${playerO} is playing`;
+    turnNode.innerText = `${aiPlayer} is playing`;
     player2.classList.add('next_turn');
     player1.classList.remove('next_turn');
   }
@@ -249,7 +248,7 @@ const declareWinner = (player, draw) => {
     return;
   }
 
-  let winner = player === playerX ? playerX : playerO;
+  let winner = player === huPlayer ? huPlayer : aiPlayer;
   if (winner) {
     winnerNode.innerText = `${winner} is the winner`;
     player2.classList.remove('next_turn');
@@ -277,7 +276,7 @@ const checkWinner = (board, ply) => {
     (r3c1 && r3c2 && r3c3)
   ) {
     isWinner = true;
-    declareWinner(ply);
+    // declareWinner(ply);
     return true;
   }
 
@@ -287,25 +286,25 @@ const checkWinner = (board, ply) => {
     (r1c3 && r2c3 && r3c3)
   ) {
     isWinner = true;
-    declareWinner(ply);
+    // declareWinner(ply);
     return true;
   }
 
   if (r1c1 && r2c2 && r3c3) {
     isWinner = true;
-    declareWinner(ply);
+    // declareWinner(ply);
     return true;
   }
 
   if (r3c1 && r2c2 && r1c3) {
     isWinner = true;
-    declareWinner(ply);
+    // declareWinner(ply);
     return true;
   }
 
   if (moves === 9) {
     isWinner = true;
-    declareWinner(null, true);
+    // declareWinner(null, true);
     return false;
   }
 };
@@ -315,12 +314,12 @@ const addNameToPlayer = (e) => {
   // console.log(target);
 
   if (target === 'player1') {
-    playerX = prompt('Enter player X name') || 'X';
-    player1.innerHTML = `P1: ${playerX}`;
+    huPlayer = prompt('Enter player X name') || 'X';
+    player1.innerHTML = `P1: ${huPlayer}`;
   }
   if (target === 'player2') {
-    playerO = prompt('Enter player X name') || 'X';
-    player2.innerHTML = `P2: ${playerO}`;
+    aiPlayer = prompt('Enter player X name') || 'X';
+    player2.innerHTML = `P2: ${aiPlayer}`;
   }
   startGame();
 };
