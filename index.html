@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="./favicon.png" />
-    <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Handlee&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <title>Tic Tac Toe</title>
   </head>
@@ -21,7 +24,6 @@
         </div>
       </div>
       <div class="stats">
-        <button id="reset_game_button">Play again</button>
         <div>Moves Left: <span id="moves"></span></div>
         <div id="turn"></div>
       </div>
@@ -37,7 +39,10 @@
       <div class="cell" id="8" data-row="2" data-col="1"></div>
       <div class="cell" id="9" data-row="2" data-col="2"></div>
     </section>
-    <div id="winner">
+
+    <div class="modal">
+      <div id="winner"></div>
+      <button id="reset_game_button">Play again</button>
     </div>
 
     <script src="index.js"></script>

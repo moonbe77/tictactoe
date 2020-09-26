@@ -5,7 +5,7 @@
   font-size: 20px;
 }
 
-button{
+button {
   width: 100%;
   background-color: #8ffffd;
   border: none;
@@ -13,9 +13,8 @@ button{
   border-radius: 5px;
 }
 
-button:hover{
+button:hover {
   background-color: #79d7d5;
-
 }
 
 #board {
@@ -32,7 +31,6 @@ button:hover{
   justify-content: space-around;
   padding: 1em;
   margin: 2em 0;
-  background-color: lightcoral;
 }
 
 .player {
@@ -69,8 +67,30 @@ button:hover{
   justify-content: center;
   align-items: center;
   margin: 1em;
+  padding: 1em;
   font-size: 1.5em;
   background-color: aquamarine;
   height: 50px;
   border-radius: 5px;
+}
+
+.modal {
+  background-color: #8ffffd7a;
+  min-width: 350px;
+  min-height: 350px;
+  position: absolute;
+  left: calc(50% - 175px);
+  top: calc(50% - 175px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease-in;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.show {
+  opacity: 1;
+  visibility: visible;
 }
